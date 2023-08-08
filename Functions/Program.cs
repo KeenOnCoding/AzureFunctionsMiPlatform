@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -5,6 +6,15 @@ using Microsoft.Extensions.Logging;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
+     .ConfigureAppConfiguration((hostingContext, config) =>
+     {
+         config.AddJsonFile("host.json", true);
+         config.AddJsonFile("local.settings.json", true);
+         config.AddEnvironmentVariables();
+
+         if (args != null)
+             config.AddCommandLine(args);
+     })
     .ConfigureServices(service =>
     {
             service.Configure<LoggerFilterOptions>(options =>
